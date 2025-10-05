@@ -73,35 +73,25 @@ void ROS2Interface::PublishEventBasedCamera(rclcpp::PublisherBase::SharedPtr pub
 
 Mappestruktur:
 
+<pre>
 stonefish_ros2_ws/
-
 ├─ src/
-
 │  └─ stonefish_bluerov2/
-
 │     ├─ CMakeLists.txt
-
 │     ├─ package.xml
-
 │     ├─ launch/
-
 │     │  └─ blueROV.py
-
 │     ├─ data/
-
 │     └─ scenarios/
-
 │        ├─ robot.scn
-
 │        └─ scenario1.scn
-
 ├─ build/
-
 ├─ install/
-
 └─ log/
+</pre>
 
 ### CMakeLists.txt
+```
 cmake_minimum_required(VERSION 3.8)
 project(stonefish_bluerov2)
 
@@ -112,8 +102,11 @@ install(DIRECTORY launch scenarios data
 )
 
 ament_package()
+```
 
 ### package.xml
+
+```
 <?xml version="1.0"?>
 <package format="3">
   <name>stonefish_bluerov2</name>
@@ -131,6 +124,7 @@ ament_package()
     <build_type>ament_cmake</build_type>
   </export>
 </package>
+```
 
 ## Bygg og installer
 cd ~/stonefish_ros2_ws
