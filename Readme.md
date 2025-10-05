@@ -76,15 +76,16 @@ Mappestruktur:
 <pre>
 stonefish_ros2_ws/
 ├─ src/
-│  └─ stonefish_bluerov2/
-│     ├─ CMakeLists.txt
-│     ├─ package.xml
-│     ├─ launch/
-│     │  └─ blueROV.py
-│     ├─ data/
-│     └─ scenarios/
-│        ├─ robot.scn
-│        └─ scenario1.scn
+│  ├─ stonefish_bluerov2/
+│  |  ├─ CMakeLists.txt
+│  |  ├─ package.xml
+│  |  ├─ launch/
+│  |  │  └─ blueROV.py
+│  |  ├─ data/
+│  |  └─ scenarios/
+│  |     ├─ robot.scn
+│  |     └─ scenario1.scn
+│  └─ stonefish_ros2/
 ├─ build/
 ├─ install/
 └─ log/
