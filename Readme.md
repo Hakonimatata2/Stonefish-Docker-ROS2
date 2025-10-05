@@ -140,3 +140,6 @@ colcon build
 
 ## Kjør simuleringen
 ros2 launch stonefish_bluerov2 blueROV.py
+
+## Ved nye filer / endringer
+Kjør "colcon build" for å bygge pakkene på nytt 
