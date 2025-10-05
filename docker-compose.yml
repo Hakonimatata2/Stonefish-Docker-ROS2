@@ -1,0 +1,18 @@
+services:
+  stonefish:
+    image: stonefish-ros2:humble
+    container_name: stonefish_dev
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - ${HOME}/stonefish_ros2_ws:/root/stonefish_ros2_ws   
+    working_dir: /root/stonefish_ros2_ws                     
+    gpus: all                                                # fjern hvis du ikke har NVIDIA
+    devices:
+      - /dev/dri:/dev/dri
+    shm_size: "1g"
+    stdin_open: true
+    tty: true
+    command: sleep infinity   # <- holder containeren i live/“synlig”
