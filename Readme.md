@@ -2,23 +2,54 @@
 
 Dette repoet beskriver hvordan du bygger og kjører en BlueROV2-simulering i ROS 2 (Humble) med Stonefish-simulatoren.
 
+## Installer NVIDIA container tools for docker
+
+Følg instruksene på siden deres.
+
 ## Bygg Docker-image
 
 docker build -t stonefish-ros2:humble .
 
-## Åpne i VS Code (Dev Container)
+## Kjør container
 
 Installer VS Code-utvidelsene:
 
-Docker
+- Docker
 
-Dev Containers
+- Dev Containers
 
-Åpne Docker-fanen i VS Code.
+Kjør i terminalen:
 
-Høyreklikk stonefish-ros2:humble under Images -> velg Run Interactive.
+```
+export XSOCK=/tmp/.X11-unix
+export XAUTH=$HOME/.Xauthority
+xhost +si:localuser:root
+docker run -it --rm --gpus all \
+  -e DISPLAY=$DISPLAY \
+  -e XAUTHORITY=$XAUTH \
+  -e NVIDIA_VISIBLE_DEVICES=all \
+  -e NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute \
+  -e __NV_PRIME_RENDER_OFFLOAD=1 \
+  -e __GLX_VENDOR_LIBRARY_NAME=nvidia \
+  -e __VK_LAYER_NV_optimus=NVIDIA_only \
+  -v $XSOCK:$XSOCK:rw \
+  -v $XAUTH:$XAUTH:ro \
+  -v $HOME/stonefish_ros2_ws:/root/stonefish_ros2_ws \
+  --ipc=host \
+  --name stonefish \
+  stonefish-ros2:humble \
+  /bin/bash
+```
 
-Når containeren kjører, høyreklikk den under Containers -> velg Attach VS Code.
+Åpne Docker-fanen i VS Code og attatch container to VS Code.
+
+### Test GPU
+Kjør i container terminalen:
+
+apt-get update && apt-get install -y mesa-utils
+glxinfo -B | egrep 'OpenGL vendor|OpenGL renderer'
+
+Renderer skal være satt til NVIDIA og ikke Intel
 
 ## Klon Stonefish ROS 2-bridge
 
@@ -71,6 +102,11 @@ void ROS2Interface::PublishEventBasedCamera(rclcpp::PublisherBase::SharedPtr pub
 
 ## Sett opp egen ROS 2-pakke for BlueROV2-simulatoren
 
+Denne fikser det som er under.
+
+cd src
+ros2 pkg create --build-type ament_cmake "package_name" --dependencies rclcpp
+
 Mappestruktur:
 
 <pre>
@@ -80,7 +116,7 @@ stonefish_ros2_ws/
 │  |  ├─ CMakeLists.txt
 │  |  ├─ package.xml
 │  |  ├─ launch/
-│  |  │  └─ blueROV.py
+│  |  │  └─ sim.py
 │  |  ├─ data/
 │  |  └─ scenarios/
 │  |     ├─ robot.scn
@@ -126,20 +162,22 @@ ament_package()
   </export>
 </package>
 ```
-
+ro
 ## Bygg og installer
+
 cd ~/stonefish_ros2_ws
-colcon build --packages-select stonefish_ros2 stonefish_bluerov2
+colcon build --symlink-install
 source install/setup.bash
 
 
 ### Hvis du får feil, prøv:
 
 rm -rf build install log
-colcon build
+
+kjør forrige steg på nytt
 
 ## Kjør simuleringen
-ros2 launch stonefish_bluerov2 blueROV.py
+ros2 launch stonefish_bluerov2 sim.py
 
 ## Ved nye filer / endringer
-Kjør "colcon build" for å bygge pakkene på nytt 
+Kjør "colcon build" for å bygge pakkene på nytt
