@@ -51,6 +51,14 @@ glxinfo -B | egrep 'OpenGL vendor|OpenGL renderer'
 
 Renderer skal være satt til NVIDIA og ikke Intel
 
+
+# Klon innhold i repo inn i workspace
+
+git clone https://github.com/Hakonimatata2/Stonefish-Ros2-Workspace .
+
+
+# Alt under her er dokumentasjon for førstegangs oppsett av workspace
+
 ## Klon Stonefish ROS 2-bridge
 
 I containeren:
