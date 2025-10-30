@@ -16,26 +16,51 @@ RUN apt-get update && apt-get install -y locales && \
     locale-gen en_US.UTF-8 && update-locale LANG=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
-# ROS 2 Humble apt-kilde
+# ROS 2 Humble apt-kilde (samme stil som “den som virket”)
 RUN apt-get update && apt-get install -y curl gnupg lsb-release && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
       -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" \
       > /etc/apt/sources.list.d/ros2.list
 
-# ROS 2 + verktøy og libs du trenger
+# ROS 2 + verktøy
 RUN apt-get update && apt-get install -y \
     ros-humble-desktop \
     python3-colcon-common-extensions python3-rosdep python3-vcstool \
     build-essential cmake git pkg-config \
     libglm-dev libsdl2-dev libfreetype6-dev \
     libpcl-dev ros-humble-pcl-ros ros-humble-pcl-conversions \
+    # runtime-libs som hjelper OpenCV/Matplotlib i headless
+    libglib2.0-0 libsm6 libxext6 libxrender1 fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
+
+# Python verktøy
+RUN apt-get update && apt-get install -y \
+    python3-pip python3-venv python3-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# --- Python-pakker for notebooks og analyse ---
+# Behold distroens matplotlib -> pinn NumPy til 1.26.x for ABI-komp
+# + pin "matplotlib-inline==0.1.6" for å unngå RcParams._get-feilen i Jupyter
+RUN pip3 install --no-cache-dir \
+    jupyterlab notebook ipykernel ipywidgets \
+    "matplotlib-inline==0.1.6" \
+    tqdm pyyaml \
+    "numpy==1.26.4" "pandas==2.2.*" \
+    rosbags \
+    scipy \
+    opencv-python-headless \
+    pillow \
+    seaborn \
+    scikit-learn \
+    plotly \
+    colorama \
+    imageio
 
 # Init rosdep (idempotent)
 RUN rosdep init || true && rosdep update
 
-# Shell-miljø
+# Shell-miljø (for interaktive shells inne i container)
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
     printf '\n[ -f /root/stonefish_ros2_ws/install/setup.bash ] && source /root/stonefish_ros2_ws/install/setup.bash\n' >> /root/.bashrc
 

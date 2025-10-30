@@ -180,6 +180,7 @@ source install/setup.bash
 
 ### Hvis du får feil, prøv:
 
+cd ~/stonefish_ros2_ws
 rm -rf build install log
 
 kjør forrige steg på nytt
