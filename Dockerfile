@@ -2,21 +2,18 @@
 FROM nvidia/opengl:1.2-glvnd-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-# Hint til GLVND for å velge NVIDIA-vendor når verten kjører Intel/Optimus
 ENV __GLX_VENDOR_LIBRARY_NAME=nvidia
 ENV __NV_PRIME_RENDER_OFFLOAD=1
 ENV __VK_LAYER_NV_optimus=NVIDIA_only
-# Nyttig ved X11 i container
 ENV QT_X11_NO_MITSHM=1
-# Gjør at nvidia-container-toolkit monterer riktige capabilites (kan også settes ved run)
 ENV NVIDIA_DRIVER_CAPABILITIES=graphics,utility,compute
 
-# Locale (ROS-installasjon liker dette)
+# Locale
 RUN apt-get update && apt-get install -y locales && \
     locale-gen en_US.UTF-8 && update-locale LANG=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
-# ROS 2 Humble apt-kilde (samme stil som “den som virket”)
+# ROS 2 Humble apt-kilde
 RUN apt-get update && apt-get install -y curl gnupg lsb-release && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
       -o /usr/share/keyrings/ros-archive-keyring.gpg && \
@@ -30,7 +27,6 @@ RUN apt-get update && apt-get install -y \
     build-essential cmake git pkg-config \
     libglm-dev libsdl2-dev libfreetype6-dev \
     libpcl-dev ros-humble-pcl-ros ros-humble-pcl-conversions \
-    # runtime-libs som hjelper OpenCV/Matplotlib i headless
     libglib2.0-0 libsm6 libxext6 libxrender1 fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
@@ -41,7 +37,7 @@ RUN apt-get update && apt-get install -y \
 
 # --- Python-pakker for notebooks og analyse ---
 # Behold distroens matplotlib -> pinn NumPy til 1.26.x for ABI-komp
-# + pin "matplotlib-inline==0.1.6" for å unngå RcParams._get-feilen i Jupyter
+# + pin "matplotlib-inline==0.1.6"
 RUN pip3 install --no-cache-dir \
     jupyterlab notebook ipykernel ipywidgets \
     "matplotlib-inline==0.1.6" \
@@ -57,10 +53,10 @@ RUN pip3 install --no-cache-dir \
     colorama \
     imageio
 
-# Init rosdep (idempotent)
+# Init rosdep
 RUN rosdep init || true && rosdep update
 
-# Shell-miljø (for interaktive shells inne i container)
+# Shell-miljø
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
     printf '\n[ -f /root/stonefish_ros2_ws/install/setup.bash ] && source /root/stonefish_ros2_ws/install/setup.bash\n' >> /root/.bashrc
 
