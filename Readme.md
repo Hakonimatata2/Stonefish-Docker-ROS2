@@ -1,6 +1,6 @@
 # Stonefish ROS 2 BlueROV2 Simulation
 
-Dette repoet beskriver hvordan du bygger og kjører en BlueROV2-simulering i ROS 2 (Humble) med Stonefish-simulatoren.
+Dette repoet beskriver hvordan du bygger og kjører en simulering i ROS 2 (Humble) med Stonefish-simulatoren.
 
 ## Installer NVIDIA container tools for docker
 
@@ -12,13 +12,13 @@ docker build -t stonefish-ros2:humble .
 
 ## Kjør container
 
-Installer VS Code-utvidelsene:
+Anbefaler å installer VS Code-utvidelsene:
 
 - Docker
 
 - Dev Containers
 
-Kjør i terminalen:
+Start container ved å kjøre i terminalen:
 
 ```
 export XSOCK=/tmp/.X11-unix
@@ -41,7 +41,7 @@ docker run -it --rm --gpus all \
   /bin/bash
 ```
 
-Åpne Docker-fanen i VS Code og attatch container to VS Code.
+Med dev container extension kan man høyreklikke på containeren og velge: attatch container to VS Code.
 
 ### Test GPU
 Kjør i container terminalen:
@@ -57,7 +57,8 @@ Renderer skal være satt til NVIDIA og ikke Intel
 git clone https://github.com/Hakonimatata2/Stonefish-Ros2-Workspace .
 
 
-# Alt under her er dokumentasjon for førstegangs oppsett av workspace
+# VIKTIG: 
+Alt under her er dokumentasjon for førstegangs oppsett av workspace. Repoet over har gjort dette for deg.
 
 ## Klon Stonefish ROS 2-bridge
 
